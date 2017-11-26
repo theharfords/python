@@ -10,21 +10,30 @@ class window():
         self.w.pack()
         X = self.w.winfo_width()
         Y = self.w.winfo_height()
+        
+        self.BoardSize = 400
+
+
         print(X)
         print(Y)
         
-        window.drawSquares(self.w)
+        window.drawSquares(self.w,self.BoardSize)
         
 
             
     def GetCanvas(self):
         return self.w
-    def drawSquares(W):#Draw Squares
+    def GetBoardSize(self):
+        return self.BoardSize
+
+    def drawSquares(self,W,BoardSize):#Draw Squares
 
         
-        YInterval = 600/8
-        XInterval = 600/8
+        YInterval =  BoardSize/8
+        XInterval = BoardSize/8
         XStart = 0
+        W.create_rectangle(0,0,400,400,fill="white")
+
         for Column in range(8):
             for Row in range(8):
                 if((Column % 2 != 0)and(Row%2 !=0)):
@@ -39,24 +48,25 @@ class window():
         
         PosX = self.Letters.find(CoordX)
         PosY = CoordY-1
-        Interval = 600/8
+        Interval = self.BoardSize/8
         w.create_rectangle(PosX*Interval,PosY*Interval,(PosX*Interval)+Interval,(PosY*Interval)+Interval, fill=Colour)    
 
     
     def drawChecker(self,CoordX,CoordY,Colour,w):
         PosX = self.Letters.find(CoordX)
         PosY=CoordY-1
-        Interval = 600/8
+        Interval = self.BoardSize/8
         w.create_oval(PosX*Interval,PosY*Interval,(PosX*Interval)+Interval,(PosY*Interval)+Interval, fill=Colour) 
 
 
 
 #End of class
 
-Window = window()
-Canvas = Window.GetCanvas()
-Window.reDrawSquare("A",6,"red",Canvas)
-Window.drawChecker("A",6,"grey",Canvas)
-Window.drawChecker("F",5,"black",Canvas)
-Window.drawChecker("D",1,"grey",Canvas)
+Screen = window()
+Canvas = Screen.GetCanvas()
+BoardSize = Screen.GetBoardSize()
+Screen.reDrawSquare("A",6,"pink",Canvas)
+#input("Waiting")
+Screen.drawSquares(W,BoardSize)
+#ScreenWindow.drawSquares(Canvas)
 
