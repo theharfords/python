@@ -17,7 +17,7 @@ class window():
         print(X)
         print(Y)
         
-        window.drawSquares(self.w,self.BoardSize)
+        self.drawSquares(self.w,self.BoardSize)
         
 
             
@@ -28,14 +28,9 @@ class window():
 
     def drawSquares(self,W,BoardSize):#Draw Squares
 
-        
-<<<<<<< HEAD
         YInterval =  BoardSize/8
         XInterval = BoardSize/8
-=======
-        YInterval = 400/8
-        XInterval = 400/8
->>>>>>> origin/master
+
         XStart = 0
         W.create_rectangle(0,0,400,400,fill="white")
 

@@ -1,5 +1,6 @@
 
 import csv
+import os
 
 
 #
@@ -28,7 +29,7 @@ class LearningData(object):
         #
 
     def loadLearningData(self):
-        print("Hello")
+        print("Hello:"+os.getcwd())
         with open(filename, newline='') as csvfile:
             filereader = csv.reader(csvfile, delimiter=',', quotechar='"')
         for row in filereader:
