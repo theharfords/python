@@ -3,19 +3,20 @@ from tkinter import *
 
 
 class window():
-    def __init__(self):   #Sets Up
+    def __init__(self):
         master = Tk()
-
-        w = Canvas(master, width=600, height=600)
-        w.pack()
-        X = w.winfo_width()
-        Y = w.winfo_height()
+        self.Letters ="ABCDEFGH"
+        self.w = Canvas(master, width=600, height=600)
+        self.w.pack()
+        X = self.w.winfo_width()
+        Y = self.w.winfo_height()
         print(X)
         print(Y)
-
-        window.drawSquares(w)
         
-        mainloop()
+        window.drawSquares(self.w)
+        
+
+            
     def GetCanvas(self):
         return self.w
     def drawSquares(W):#Draw Squares
@@ -34,18 +35,28 @@ class window():
 
 
 
-    def reDrawSquare(Coord,Colour,W):#Clear A Square
-        Letters ="ABCDEFGH"
-        PosX = Letters.find(Coord[0])
-        PosY = int(Coord[1])
-        Interval = 600/8
-        W.create_rectangle(PosX*Interval,PosY*Interval,(PosX*Interval)+Interval, (PosX*Interval)+Interval, fill=Colour)    
-
-
-
-
+    def reDrawSquare(self,CoordX,CoordY,Colour,w):#Clear A Square
         
+        PosX = self.Letters.find(CoordX)
+        PosY = CoordY-1
+        Interval = 600/8
+        w.create_rectangle(PosX*Interval,PosY*Interval,(PosX*Interval)+Interval,(PosY*Interval)+Interval, fill=Colour)    
+
+    
+    def drawChecker(self,CoordX,CoordY,Colour,w):
+        PosX = self.Letters.find(CoordX)
+        PosY=CoordY-1
+        Interval = 600/8
+        w.create_oval(PosX*Interval,PosY*Interval,(PosX*Interval)+Interval,(PosY*Interval)+Interval, fill=Colour) 
+
+
+
+#End of class
+
 Window = window()
-Window.drawSquares()
-Window.redrawSquare("A6","red",Window.GetCanvas())
+Canvas = Window.GetCanvas()
+Window.reDrawSquare("A",6,"red",Canvas)
+Window.drawChecker("A",6,"grey",Canvas)
+Window.drawChecker("F",5,"black",Canvas)
+Window.drawChecker("D",1,"grey",Canvas)
 
