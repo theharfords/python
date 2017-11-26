@@ -21,8 +21,8 @@ class window():
     def drawSquares(W):#Draw Squares
 
         
-        YInterval = 600/8
-        XInterval = 600/8
+        YInterval = 400/8
+        XInterval = 400/8
         XStart = 0
         for Column in range(8):
             for Row in range(8):
