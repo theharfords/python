@@ -46,13 +46,11 @@ class window(object):
 
 
 
-    def reDrawSquare(self,CoordX,CoordY,Colour,w):#Clear A Square
-               
-        
-        PosX = self.Letters.find(CoordX)
-        PosY = CoordY-1
+    def reDrawSquare(self,CoordXY):#Clear A Square
+        PosX = self.Letters.find(CoordXY[0])
+        PosY=int(CoordXY[1])-1
         Interval = self.BoardSize/8
-        w.create_rectangle(PosX*Interval,PosY*Interval,(PosX*Interval)+Interval,(PosY*Interval)+Interval, fill=Colour)    
+        self.w.create_rectangle(PosX*Interval,PosY*Interval,(PosX*Interval)+Interval,(PosY*Interval)+Interval, fill="blue")    
 
     
     def drawChecker(self,CoordXY,Colour):

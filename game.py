@@ -217,7 +217,7 @@ class game:
         # draw checkers
         for i in range(0,len(self.checkers)):
             GamePanelWindow.drawChecker(self.checkers[i].getPosition(),self.checkers[i].getColour())
-
+        GamePanelWindow.reDrawSquare("A1")
         return
 #
 # execute main game class
