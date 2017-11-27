@@ -77,7 +77,7 @@ class game:
         else:
             print("Searching for moves for black")
 
-        for i in range (1,len(self.checkers)):
+        for i in range (0,len(self.checkers)):
             # is current check right colour (we are looking for)
             if ((self.checkers[i].getColour()==colour) and (self.checkers[i].isActive())):
                 # we have a match, so check avaialbe moves to the left
@@ -214,6 +214,10 @@ class game:
         print("Piece :"+str(self.getCheckerAt("F8")));
         print(self.getValidMoves(chck.white))
         GamePanelWindow = gp.window()
+        # draw checkers
+        for i in range(0,len(self.checkers)):
+            GamePanelWindow.drawChecker(self.checkers[i].getPosition(),self.checkers[i].getColour())
+
         return
 #
 # execute main game class
