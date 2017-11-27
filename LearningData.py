@@ -1,7 +1,5 @@
 
-import csv
-import os
-
+import os.path
 
 #
 #
@@ -13,27 +11,47 @@ import os
 #
 
 filename="LearningData.csv"
+# https://1drv.ms/u/s!AnpUjYT6qxSdnfQkbeS_B3I1srYqFA
+
 
 class LearningData(object):
 
-
-
+    
     def __init__(self):
         print("LearningData: initialising class to handle learning data")
 
+        self.LearntData = {}
+        self.LearntData["version"] = 1
+
+        self.loadLearningData()
+        
         #
         # routine to read in learning data from file
         # file format is "move data",score  
         # each line has one data element on it
         #
         #
+        
 
     def loadLearningData(self):
-        print("Hello:"+os.getcwd())
-        with open(filename, newline='') as csvfile:
-            filereader = csv.reader(csvfile, delimiter=',', quotechar='"')
-        for row in filereader:
-            print(', '.join(row))
+        print("Hello:"+os.getcwd()+"\\"+filename)
+
+        userhome = os.path.expanduser('~')
+        csvfile= os.path.join(userhome, 'Desktop', filename)
+        filehandle = open(csvfile, "r")
+        self.totalEntries=0
+        for line in filehandle:
+            self.data = line.split(",")
+            self.movedata=""
+            for i in range (0,len(self.data)-1):
+                self.movedata=self.movedata+self.data[i]
+            # add item to list
+            self.LearntData[self.movedata] = 1 # self.data[len(self.data)-1]
+            self.totalEntries=self.totalEntries+1
+
+        filehandle.close()
+        print("Total entries read in:",self.totalEntries)
+            
         
         
 
@@ -46,7 +64,6 @@ class LearningData(object):
 # **********************************************************
 
     def run(self):
-        self.loadLearningData()
         return
 #
 # execute main game class

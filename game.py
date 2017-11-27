@@ -8,7 +8,7 @@
 
 import numpy as np
 import checker as chck
-import GamePanel.py
+import GamePanel as gp
 
 class game:
 
@@ -213,7 +213,7 @@ class game:
         self.setupBoard();
         print("Piece :"+str(self.getCheckerAt("F8")));
         print(self.getValidMoves(chck.white))
-        GamePannel.window()
+        GamePanelWindow = gp.window()
         return
 #
 # execute main game class

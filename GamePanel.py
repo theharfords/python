@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import *
 
 
-class window():
+class window(object):
+    
     def __init__(self):
         master = Tk()
         self.Letters ="ABCDEFGH"
@@ -62,11 +63,4 @@ class window():
 
 #End of class
 
-Screen = window()
-Canvas = Screen.GetCanvas()
-BoardSize = Screen.GetBoardSize()
-Screen.reDrawSquare("A",6,"pink",Canvas)
-#input("Waiting")
-Screen.drawSquares(W,BoardSize)
-#ScreenWindow.drawSquares(Canvas)
 
