@@ -9,6 +9,7 @@
 import numpy as np
 import checker as chck
 import GamePanel as gp
+import hashlib
 
 class game:
 
@@ -203,6 +204,81 @@ class game:
         return self.newCoords
 
 
+
+###############################################
+#
+#  returns a hash of the curent board setup
+#
+###############################################
+    def getCurrentBoardHash(self):
+        self.hashstring = ""
+        self.hashlist = np.empty(0,dtype=object);
+        for i in range (0,len(self.checkers)):
+            # is current check right colour (we are looking for)
+            if  self.checkers[i].isActive():
+                self.hashlist=np.append(self.hashlist,self.checkers[i].serialisation());
+
+        # sort the list
+        self.hashlist = np.sort(self.hashlist)
+
+        # crete hash
+        for i in range (0,len(self.hashlist)):
+                self.hashstring = self.hashstring +self.hashlist[i]+"."
+
+        self.hash_object = hashlib.md5(str.encode(self.hashstring))
+        print(str.encode(self.hashstring))
+        return self.hash_object
+                
+
+
+###############################################
+#
+#  returns a hash of a future board setup given
+#  a move
+#
+###############################################
+    def getFutureBoardHash(self,nextMove):
+        self.hashstring = ""
+        self.pieceTakenIndex= -1
+        self.pieceIndex = -1
+        
+        # get what piece is moving
+        self.pieceToMove = nextMove[:2]
+        self.pieceNewLocation = nextMove[3:5]
+        self.pieceIndex = self.getCheckerAt(self.pieceToMove)
+
+        # if there a piece we need to take ?
+        if nextMove.index("(") != 0:
+            self.pieceTaken = nextMove[6:8]
+            self.pieceTakenIndex= self.getCheckerAt(self.pieceTaken)
+     
+        self.hashlist = np.empty(0,dtype=object);
+        for i in range (0,len(self.checkers)):
+            # is current check active
+            if  self.checkers[i].isActive():
+                self.currentchecker =self.checkers[i]
+                # have we found the piece we want to move
+                if i == self.pieceIndex:
+                    self.currentchecker.move(self.pieceNewLocation)
+                # are we the piece which was taken
+                if i != self.pieceTakenIndex:
+                    self.hashlist=np.append(self.hashlist,self.currentchecker.serialisation())
+
+        # sort the list
+        self.hashlist = np.sort(self.hashlist)
+        
+        # create hash
+        for i in range (0,len(self.hashlist)):
+                self.hashstring = self.hashstring +self.hashlist[i]+"."
+
+        self.hash_object = hashlib.md5(str.encode(self.hashstring))
+        print(str.encode(self.hashstring))
+        return self.hash_object
+                
+        
+
+
+
 # **********************************************************
 #
 #  main launcher for app
@@ -218,6 +294,8 @@ class game:
         for i in range(0,len(self.checkers)):
             GamePanelWindow.drawChecker(self.checkers[i].getPosition(),self.checkers[i].getColour())
         GamePanelWindow.reDrawSquare("A1")
+        print(self.getCurrentBoardHash())
+        print(self.getFutureBoardHash("A1-B2(C3)"))
         return
 #
 # execute main game class

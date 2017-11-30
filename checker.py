@@ -31,4 +31,20 @@ class checker(object):
     def isDouble(self):
         return self.isDouble;
 
+    # serialisation used for creating a hash of the board
+    def serialisation(self):
+        if self.onBoard == False:
+            return ""
+        self.text = self.position;
+        if self.colour == black:
+            self.text = self.text + "B"
+        else:
+            self.text = self.text + "W"
+                
+        if self.isDouble == True:
+            self.text = self.text + "Q"
+        else:
+            self.text = self.text + "S"
+
+        return self.text
 
