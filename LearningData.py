@@ -47,14 +47,13 @@ class LearningData(object):
             # add item to list
             self.LearntData[int(self.data[0],16)] = int(self.data[1]) # self.data[len(self.data)-1]
             self.totalEntries=self.totalEntries+1
-            print(int(self.data[0],16))
 
         filehandle.close()
-        print("Total entries read in:",self.totalEntries)
+        print("LearningData: Entries read in:",self.totalEntries)
             
     def getScorefromHash(self,hashInHex):
         self.index = int(hashInHex,16)
-        self.value=-1
+        self.value=0  # default value is 0 - no reward
         try:
             self.value = self.LearntData[self.index]
         except KeyError:
@@ -63,21 +62,10 @@ class LearningData(object):
         return self.value
         
 
-
-
-# **********************************************************
-#
-#  main launcher for app
-#
-# **********************************************************
-
-    def run(self):
-        return
 #
 # execute main game class
 #
 if __name__ == '__main__':
     a_learningData = LearningData();
-    a_learningData.run();
     total = a_learningData.getScorefromHash("29ef79d8cb1b6735f66d1b95f41715a4")
     print(str(total))

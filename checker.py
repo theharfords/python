@@ -32,6 +32,10 @@ class checker(object):
     def isDouble(self):
         return self.isDouble;
 
+    def takePiece(self):
+        self.onBoard = False
+        print("Piece taken:"+self.position+" - "+str(self.colour))
+
     # serialisation used for creating a hash of the board
     def serialisation(self):
         if self.onBoard == False:

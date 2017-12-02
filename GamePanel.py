@@ -6,9 +6,9 @@ import checker as chck
 class window(object):
     
     def __init__(self):
-        master = Tk()
+        self.master = Tk()
         self.Letters ="ABCDEFGH"
-        self.w = Canvas(master, width=600, height=600)
+        self.w = Canvas(self.master, width=600, height=600)
         self.w.pack()
         X = self.w.winfo_width()
         Y = self.w.winfo_height()
@@ -19,7 +19,7 @@ class window(object):
         print(X)
         print(Y)
         
-        self.drawSquares(self.BoardSize)
+        self.drawSquares()
         
 
             
@@ -28,12 +28,13 @@ class window(object):
     def GetBoardSize(self):
         return self.BoardSize
 
-    def drawSquares(self,BoardSize):#Draw Squares
+    def drawSquares(self):#Draw Squares
 
-        YInterval =  BoardSize/8
-        XInterval = BoardSize/8
+        YInterval =  self.BoardSize/8
+        XInterval = self.BoardSize/8
 
         XStart = 0
+        self.w.delete("all")
         self.w.create_rectangle(0,0,400,400,fill="white")
 
         for Column in range(8):
@@ -63,7 +64,8 @@ class window(object):
         Interval = self.BoardSize/8
         self.w.create_oval(PosX*Interval,PosY*Interval,(PosX*Interval)+Interval,(PosY*Interval)+Interval, fill=FillColour) 
 
-
+    def update(self):
+        self.master.update()
 
 #End of class
 
