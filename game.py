@@ -59,7 +59,7 @@ class game:
         return
 
     def getCheckerAt(self,position):
-        for i in range (1,len(self.checkers)):
+        for i in range (0,len(self.checkers)):
             if ((self.checkers[i].getPosition()==position) and (self.checkers[i].isActive())):
                 return i
         return -1
@@ -225,9 +225,9 @@ class game:
         for i in range (0,len(self.hashlist)):
                 self.hashstring = self.hashstring +self.hashlist[i]+"."
 
-        self.hash_object = hashlib.md5(str.encode(self.hashstring))
-        print(str.encode(self.hashstring))
-        return self.hash_object
+        # encode and return hash value as a number
+        hash_object = hashlib.md5(str.encode(self.hashstring))
+        return hash_object.hexdigest()
                 
 
 
@@ -246,6 +246,7 @@ class game:
         self.pieceToMove = nextMove[:2]
         self.pieceNewLocation = nextMove[3:5]
         self.pieceIndex = self.getCheckerAt(self.pieceToMove)
+        print("index location of:"+self.pieceToMove+" = "+str(self.pieceIndex))
 
         # if there a piece we need to take ?
         if nextMove.index("(") != 0:
@@ -270,10 +271,9 @@ class game:
         # create hash
         for i in range (0,len(self.hashlist)):
                 self.hashstring = self.hashstring +self.hashlist[i]+"."
-
-        self.hash_object = hashlib.md5(str.encode(self.hashstring))
-        print(str.encode(self.hashstring))
-        return self.hash_object
+        # encode and return hash value as a number
+        hash_object = hashlib.md5(str.encode(self.hashstring))
+        return hash_object.hexdigest()
                 
         
 

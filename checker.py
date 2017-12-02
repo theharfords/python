@@ -17,6 +17,7 @@ class checker(object):
         self.isDouble = False
 
     def move(self,newPosition):
+        print("moving "+self.position+"  to "+newPosition)
         self.position = newPosition;
 
     def getPosition(self):
