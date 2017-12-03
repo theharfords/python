@@ -35,7 +35,7 @@ class checker(object):
         self.onBoard = False
 
     def makeDouble(self):
-        print("Congrats piece:"+self.position+" is now a double")
+#        print("Congrats piece:"+self.position+" is now a double")
         self.isDouble = True
 
 

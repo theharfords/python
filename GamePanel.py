@@ -67,7 +67,8 @@ class window(object):
         if isDouble==True:
             self.w.create_oval(PosX*Interval,PosY*Interval,(PosX*Interval)+(Interval/2),(PosY*Interval)+(Interval/2), fill="green") 
             
-
+    def close(self):
+        self.master.destroy()
 
     def update(self):
         self.master.update()

@@ -502,7 +502,7 @@ class game:
         if nextMove.find("(") >0:
             self.pieceTaken = nextMove[6:8]
             self.pieceTakenIndex= self.getCheckerAt(self.pieceTaken)
-            print("taking piece"+self.pieceTaken+" index: "+str(self.pieceTakenIndex))
+#            print("taking piece"+self.pieceTaken+" index: "+str(self.pieceTakenIndex))
             # take piece
             self.colourTaken = self.checkers[self.pieceTakenIndex].getColour()
             self.checkers[self.pieceTakenIndex].takePiece()
@@ -579,14 +579,14 @@ class game:
             GamePanelWindow.update()
 
             # show whose turn it is
-            if self.whosTurn == chck.white:
-                print("White turn!")
-            else:
-                print("Black turn!")
+#            if self.whosTurn == chck.white:
+#                print("White turn!")
+#            else:
+#                print("Black turn!")
                 
             # get valid moves for current player
             self.avaialbleMoves = self.getValidMoves(self.whosTurn)
-            print(self.avaialbleMoves)
+#            print(self.avaialbleMoves)
             if len(self.avaialbleMoves) == 0:
                 self.stillPlaying = False
                 print("no moves avaialble...exiting")
@@ -612,7 +612,7 @@ class game:
             if (self.stillPlaying):
                 if self.totalScores == 0:
                     j = np.random.choice(len(self.avaialbleMoves));
-                    print("Random move as no learning data:"+self.avaialbleMoves[j])
+#                    print("Random move as no learning data:"+self.avaialbleMoves[j])
                     self.makeMove(self.avaialbleMoves[j])
                 else:
                     # totalscores does not equal zero, so we have some learning data
@@ -620,13 +620,13 @@ class game:
                     p = np.random.random();
                     if p<0.1:  #10%
                         j = np.random.choice(len(self.avaialbleMoves));
-                        print("Random move (10% chance):"+self.avaialbleMoves[j])
+#                        print("Random move (10% chance):"+self.avaialbleMoves[j])
                         self.makeMove(self.avaialbleMoves[j])
                   
                     else:
                         # we take the best move 90% of time
                         j = np.argmax(self.moveScores);  # get best score index
-                        print("Best move (90% chance):"+self.avaialbleMoves[j])
+#                        print("Best move (90% chance):"+self.avaialbleMoves[j])
 
                         self.makeMove(self.avaialbleMoves[j])                 
                 
@@ -655,14 +655,21 @@ class game:
                 GamePanelWindow.drawChecker(self.checkers[i].getPosition(),self.checkers[i].getColour(),self.checkers[i].ifDouble())
         GamePanelWindow.update()
 
+        self.gameTurns = self.gameTurns /2
+
         if self.whitePiecesLeft==0:
-            print("Black wins!")
+            print("Black wins! in "+str(self.gameTurns)+" moves")
             LearntData.updateLearningData(blackMoves,self.gameTurns,self.blackPiecesLeft)
-            LearntData.saveLearningData()
+            if self.gameTurns < 80:
+                LearntData.saveLearningData()
         else:
-            print("white wins!")
+            print("white wins! in "+str(self.gameTurns)+" moves")
             LearntData.updateLearningData(whiteMoves,self.gameTurns,self.whitePiecesLeft)
-            LearntData.saveLearningData()
+            if self.gameTurns < 80:
+                LearntData.saveLearningData()
+
+
+        GamePanelWindow.close()
             
             
 
@@ -676,8 +683,10 @@ class game:
     def run(self):
 
         # play computer against computer
-        self.PlayComputervsComputerGame()
-        
+        self.mycount=0
+        while self.mycount<50:
+            self.PlayComputervsComputerGame()
+            self.mycount=self.mycount+1
 
         return
 #
