@@ -60,6 +60,42 @@ class game:
         print ("Length:"+str(len(self.checkers)));
         return
 
+    def setupTestBoard(self):
+        # delete existing array if anything exists
+        self.checkers = np.empty(0,dtype=object);
+        # add black pieces
+        self.checkers = np.append(self.checkers,chck.checker("A1",chck.black));
+        self.checkers = np.append(self.checkers,chck.checker("A3",chck.black));
+        self.checkers = np.append(self.checkers,chck.checker("A5",chck.black));
+        self.checkers = np.append(self.checkers,chck.checker("A7",chck.black));
+        self.checkers = np.append(self.checkers,chck.checker("B2",chck.black));
+        self.checkers = np.append(self.checkers,chck.checker("B4",chck.black));
+        self.checkers = np.append(self.checkers,chck.checker("B6",chck.black));
+        self.checkers = np.append(self.checkers,chck.checker("B8",chck.black));
+        self.checkers = np.append(self.checkers,chck.checker("E1",chck.black));
+        self.checkers = np.append(self.checkers,chck.checker("D4",chck.black));
+        self.checkers = np.append(self.checkers,chck.checker("C5",chck.black));
+        self.checkers = np.append(self.checkers,chck.checker("D8",chck.black));
+
+        # add white pieces
+        self.checkers = np.append(self.checkers,chck.checker("H2",chck.white));
+        self.checkers = np.append(self.checkers,chck.checker("H4",chck.white));
+        self.checkers = np.append(self.checkers,chck.checker("H6",chck.white));
+        self.checkers = np.append(self.checkers,chck.checker("H8",chck.white));
+        self.checkers = np.append(self.checkers,chck.checker("G1",chck.white));
+        self.checkers = np.append(self.checkers,chck.checker("G3",chck.white));
+        self.checkers = np.append(self.checkers,chck.checker("G5",chck.white));
+        self.checkers = np.append(self.checkers,chck.checker("G7",chck.white));
+        self.checkers = np.append(self.checkers,chck.checker("F2",chck.white));
+        self.checkers = np.append(self.checkers,chck.checker("E5",chck.white));
+        self.checkers = np.append(self.checkers,chck.checker("F6",chck.white));
+        self.checkers = np.append(self.checkers,chck.checker("D6",chck.white));
+
+
+        print ("Length:"+str(len(self.checkers)));
+        return
+
+
     def getCheckerAt(self,position):
 #        print("getCheckerAt:"+position)
         for i in range (0,len(self.checkers)):
@@ -76,10 +112,6 @@ class game:
 
     def getValidMoves(self,colour):
         self.validMoves = []
-        if colour == chck.white:
-            print("searching for moves for white")
-        else:
-            print("Searching for moves for black")
 
         for i in range (0,len(self.checkers)):
             # is current check right colour (we are looking for)
@@ -125,11 +157,17 @@ class game:
 
         # fall through.. there is a piece, can we take it?
         if (self.checkers[self.blockPiece].getColour() != colour):
+            # make sure that we are not taking piece off board.
+            if self.checkers[self.blockPiece].getPosition()[1]=="1":
+                return ""
+            if self.checkers[self.blockPiece].getPosition()[1]=="8":
+                return ""
+            # so far so good, not on edge of board
             self.jumpPosition = self.getCoords(self.avaialbeMove,self.directionOfPiece);
             self.blockPiece = self.getCheckerAt(self.jumpPosition);
 
             if (self.blockPiece==-1):
-                print("GetMoveToLeft: take a peice found")
+#                print("GetMoveToLeft: take a peice found")
                 # no piece in the way so return move
                 return currentPosition+"-"+self.jumpPosition+"("+self.avaialbeMove+")"
         # fall though no move to the left , so return blank
@@ -163,11 +201,17 @@ class game:
 
         # fall through.. there is a piece, can we take it?
         if (self.checkers[self.blockPiece].getColour() != colour):
+            # make sure that we are not taking piece off board.
+            if self.checkers[self.blockPiece].getPosition()[1]=="1":
+                return ""
+            if self.checkers[self.blockPiece].getPosition()[1]=="8":
+                return ""
+            # so far so good, not on edge of board
             self.jumpPosition = self.getCoords(self.avaialbeMove,self.directionOfPiece);
             self.blockPiece = self.getCheckerAt(self.jumpPosition);
             if (self.blockPiece==-1):
                 # no piece in the way so return move
-                print("GetMoveToRight: take a peice found")
+#                print("GetMoveToRight: take a peice found")
                 return currentPosition+"-"+self.jumpPosition+"("+self.avaialbeMove+")"
 
         # fall though no move to the right , so return blank
@@ -298,12 +342,18 @@ class game:
         self.pieceIndex = self.getCheckerAt(self.pieceToMove)
 
         # if there a piece we need to take ?
-        if nextMove.find("(") != 0:
-            self.pieceTaken = nextMove[7:9]
-            print("taking piece"+self.pieceTaken)
+        if nextMove.find("(") >0:
+            self.pieceTaken = nextMove[6:8]
             self.pieceTakenIndex= self.getCheckerAt(self.pieceTaken)
+            print("taking piece"+self.pieceTaken+" index: "+str(self.pieceTakenIndex))
             # take piece
+            self.colourTaken = self.checkers[self.pieceTakenIndex].getColour()
             self.checkers[self.pieceTakenIndex].takePiece()
+            # reduce number of pieces on baord
+            if self.colourTaken == chck.black:
+                self.blackPiecesLeft = self.blackPiecesLeft -1
+            else:
+                self.whitePiecesLeft = self.whitePiecesLeft -1
             
         for i in range (0,len(self.checkers)):
             # is current check active
@@ -320,7 +370,7 @@ class game:
         self.whosTurn = chck.white
 
         # setup board
-        self.setupBoard()
+        self.setupTestBoard()
 
         # number of turns taken in the game (i.e. number of times a player has taken a turn)
         # note:  This does not increase if a player gets a free move when taking a oppisiton
@@ -352,7 +402,8 @@ class game:
             # draw board
             GamePanelWindow.drawSquares()
             for i in range(0,len(self.checkers)):
-                GamePanelWindow.drawChecker(self.checkers[i].getPosition(),self.checkers[i].getColour())
+                if self.checkers[i].isActive():
+                    GamePanelWindow.drawChecker(self.checkers[i].getPosition(),self.checkers[i].getColour())
             GamePanelWindow.update()
 
             # show whose turn it is
@@ -393,15 +444,6 @@ class game:
                 print("Random move as no learning data:"+self.avaialbleMoves[j])
                 self.makeMove(self.avaialbleMoves[j])
 
-                # have we just taken a piece ?
-                if self.avaialbleMoves[j].find("(") != 0:
-                    if self.whosTurn == chck.white:
-                        self.blackPiecesLeft = self.blackPiecesLeft -1
-                    else:
-                        self.whitePiecesLeft=self.whitePiecesLeft -1
-
-
-
             else:
                 # totalscores does not equal zero, so we have some learning data
                 # so we have a 10% change of random move, otherwise we take the best move
@@ -423,14 +465,7 @@ class game:
                     j = np.argmax(self.moveScores);  # get best score index
                     print("Best move (90% chance):"+self.avaialbleMoves[j])
 
-                    self.makeMove(self.avaialbleMoves[j])
-
-                    # have we just taken a piece ?
-                    if self.avaialbleMoves[j].find("(") != 0:
-                        if self.whosTurn == chck.white:
-                            self.blackPiecesLeft = self.blackPiecesLeft -1
-                        else:
-                            self.whitePiecesLeft=self.whitePiecesLeft -1                
+                    self.makeMove(self.avaialbleMoves[j])                
 
             # increase counter for number of moves taken
             self.gameTurns=self.gameTurns+1
@@ -460,7 +495,7 @@ class game:
 # **********************************************************
 
     def run(self):
-        self.setupBoard();
+        self.setupTestBoard();
         print("Piece :"+str(self.getCheckerAt("F8")));
         print(self.getValidMoves(chck.white))
 

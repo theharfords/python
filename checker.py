@@ -17,7 +17,6 @@ class checker(object):
         self.isDouble = False
 
     def move(self,newPosition):
-        print("moving "+self.position+"  to "+newPosition)
         self.position = newPosition;
 
     def getPosition(self):
@@ -34,7 +33,7 @@ class checker(object):
 
     def takePiece(self):
         self.onBoard = False
-        print("Piece taken:"+self.position+" - "+str(self.colour))
+
 
     # serialisation used for creating a hash of the board
     def serialisation(self):
