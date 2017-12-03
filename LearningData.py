@@ -74,7 +74,8 @@ class LearningData(object):
 
     def updateLearningData(self,historicalMoves,totalMoves,peicesLeft):
         # calculate score to increase data by
-        self.score = int((100/totalMoves)*peicesLeft)
+        self.score = int(1+(100/totalMoves))*peicesLeft
+        self.score = self.score+1
         print("Game score is:" + str(self.score))
         for i in range(0,len(historicalMoves)):
             self.currentMove = historicalMoves[i]
