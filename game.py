@@ -563,6 +563,10 @@ class game:
         # draw board - get cals
         GamePanelWindow = gp.window()
 
+        # Player game states
+        blackMoves = []
+        whiteMoves = []
+
 
         # main game loop
         while self.stillPlaying:
@@ -588,11 +592,12 @@ class game:
                 print("no moves avaialble...exiting")
 
             # debugging - wait for under input
- #           self.dummy=input("Press enter")
+            #self.dummy=input("Press enter")
 
 
             self.moveScores = []
             self.totalScores = 0
+
             for i in range(0,len(self.avaialbleMoves)):
                 self.hashcodeforMove = self.getFutureBoardHash(self.avaialbleMoves[i])
                 self.currentScore = LearntData.getScorefromHash(self.hashcodeforMove)
@@ -628,11 +633,14 @@ class game:
             # increase counter for number of moves taken
             self.gameTurns=self.gameTurns+1
 
-            #who's turn is now
-            if self.whosTurn == chck.white:
-                self.whosTurn = chck.black
-            else:
-                self.whosTurn = chck.white
+            #who's turn is now and save game states, assuming game is still going.
+            if self.stillPlaying:
+                if self.whosTurn == chck.white:
+                    whiteMoves.append(self.getCurrentBoardHash())
+                    self.whosTurn = chck.black
+                else:
+                    self.whosTurn = chck.white
+                    blackMoves.append(self.getCurrentBoardHash())
 
             # end of game?
             if ((self.whitePiecesLeft ==0) or (self.blackPiecesLeft ==0)):
@@ -649,9 +657,12 @@ class game:
 
         if self.whitePiecesLeft==0:
             print("Black wins!")
+            LearntData.updateLearningData(blackMoves,self.gameTurns,self.blackPiecesLeft)
+            LearntData.saveLearningData()
         else:
             print("white wins!")
-                
+            LearntData.updateLearningData(whiteMoves,self.gameTurns,self.whitePiecesLeft)
+            LearntData.saveLearningData()
             
             
 

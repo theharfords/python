@@ -33,8 +33,6 @@ class LearningData(object):
         
 
     def loadLearningData(self):
-        print("Hello:"+os.getcwd()+"\\"+filename)
-
         userhome = os.path.expanduser('~')
         csvfile= os.path.join(userhome, 'Desktop', filename)
         filehandle = open(csvfile, "r")
@@ -45,22 +43,46 @@ class LearningData(object):
             for i in range (0,len(self.data)-1):
                 self.movedata=self.movedata+self.data[i]
             # add item to list
-            self.LearntData[int(self.data[0],16)] = int(self.data[1]) # self.data[len(self.data)-1]
+            self.LearntData[self.data[0]] = int(self.data[1]) # self.data[len(self.data)-1]
             self.totalEntries=self.totalEntries+1
 
         filehandle.close()
         print("LearningData: Entries read in:",self.totalEntries)
+
+
+    def saveLearningData(self):
+        userhome = os.path.expanduser('~')
+        csvfile= os.path.join(userhome, 'Desktop', filename)
+        filehandle = open(csvfile, "w")
+        for i,item in enumerate (self.LearntData):
+            self.itemscore = self.getScorefromHash(item)
+            print(item+","+str(self.itemscore),file=filehandle)
+
+        #close file
+        filehandle.close()
+        print("LearningData: Entries saved in:",len(self.LearntData))
+        
             
     def getScorefromHash(self,hashInHex):
-        self.index = int(hashInHex,16)
         self.value=0  # default value is 0 - no reward
         try:
-            self.value = self.LearntData[self.index]
+            self.value = self.LearntData[hashInHex]
         except KeyError:
             # Key is not present
             pass
         return self.value
-        
+
+    def updateLearningData(self,historicalMoves,totalMoves,peicesLeft):
+        # calculate score to increase data by
+        self.score = int((100/totalMoves)*peicesLeft)
+        print("Game score is:" + str(self.score))
+        for i in range(0,len(historicalMoves)):
+            self.currentMove = historicalMoves[i]
+            self.existingScore = self.getScorefromHash(self.currentMove)
+            
+            #save updated hash
+            self.LearntData[self.currentMove] = self.existingScore + self.score 
+                    
 
 #
 # execute main game class
