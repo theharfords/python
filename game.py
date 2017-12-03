@@ -125,6 +125,18 @@ class game:
                 if len(self.avaialbleMoves) >0:
                     self.validMoves.append(self.avaialbleMoves)
 
+                # are we a double peice ? if so lets check backwards..
+                if self.checkers[i].isDouble:
+                    # backwards to the left
+                    self.avaialbleMoves = self.getDoubleMoveToLeft(self.checkers[i].getPosition(),colour)
+                    if len(self.avaialbleMoves) >0:
+                        self.validMoves.append(self.avaialbleMoves)
+
+                    # and to the right backwards
+                    self.avaialbleMoves = self.getDoubleMoveToRight(self.checkers[i].getPosition(),colour)
+                    if len(self.avaialbleMoves) >0:
+                        self.validMoves.append(self.avaialbleMoves)
+
         return self.validMoves
 
 
@@ -135,6 +147,12 @@ class game:
             return ""
         if ((colour == chck.black) and (currentPosition[1]=="8")):
             return ""
+
+        # are we at the end of board, so return ?
+        if ((colour == chck.white) and (currentPosition[0]=="A")):
+            return ""
+        if ((colour == chck.black) and (currentPosition[0]=="H")):
+            return ""       
 
         self.directionOfPiece=""
         self.avaialbeMove = ""
@@ -181,6 +199,13 @@ class game:
         if ((colour == chck.black) and (currentPosition[1]=="1")):
             return ""
 
+        # are we at the end of board, so return ?
+        if ((colour == chck.white) and (currentPosition[0]=="A")):
+            return ""
+        if ((colour == chck.black) and (currentPosition[0]=="H")):
+            return ""       
+
+
         self.avaialbeMove = ""
         if (colour == chck.white):
             self.directionOfPiece = "UR"
@@ -216,9 +241,123 @@ class game:
 
         # fall though no move to the right , so return blank
         return ""
+    
+########################################################################################
+#
+#  Is the Piece a double piece ?  is so lets explore moves backwards
+#  Note: this function does not get if a double, calling code must do that
+#  this just returns what moves are avaiallbe.  These work in the exact same way
+# as the getMoveToLeft and getMovetoRight,  but in opposite direction
+#
+#########################################################################################
+
+    def getDoubleMoveToLeft(self,currentPosition,colour):
+        # are we against the edge ?
+        if ((colour == chck.white) and (currentPosition[1]=="8")):
+            return ""
+        if ((colour == chck.black) and (currentPosition[1]=="1")):
+            return ""
+
+        # are we at the end of board, so return ?
+        if ((colour == chck.white) and (currentPosition[0]=="H")):
+            return ""
+        if ((colour == chck.black) and (currentPosition[0]=="A")):
+            return ""       
+
+        self.directionOfPiece=""
+        self.avaialbeMove = ""
+        if (colour == chck.white):
+            self.directionOfPiece = "DL"
+        else:
+            self.directionOfPiece="UL"
+
+        self.avaialbeMove = self.getCoords(currentPosition,self.directionOfPiece);
+
+        # we assume we could now have hit walls
+        if (self.avaialbeMove==""):
+            print("Bug found in getDoubleMoveToLeft")
+            return ""
+
+        self.blockPiece = self.getCheckerAt(self.avaialbeMove);
+        if (self.blockPiece==-1):
+            # no piece in the way so return move
+            return currentPosition+"-"+self.avaialbeMove
+
+        # fall through.. there is a piece, can we take it?
+        if (self.checkers[self.blockPiece].getColour() != colour):
+            # make sure that we are not taking piece off board.
+            if self.checkers[self.blockPiece].getPosition()[1]=="1":
+                return ""
+            if self.checkers[self.blockPiece].getPosition()[1]=="8":
+                return ""
+            # so far so good, not on edge of board
+            self.jumpPosition = self.getCoords(self.avaialbeMove,self.directionOfPiece);
+            self.blockPiece = self.getCheckerAt(self.jumpPosition);
+
+            if (self.blockPiece==-1):
+#                print("GetMoveToLeft: take a peice found")
+                # no piece in the way so return move
+                return currentPosition+"-"+self.jumpPosition+"("+self.avaialbeMove+")"
+        # fall though no move to the left , so return blank
+        return ""
+
+    def getDoubleMoveToRight(self,currentPosition,colour):
+        self.directionOfPiece="";
+        # are we against the edge ?
+        if ((colour == chck.white) and (currentPosition[1]=="1")):
+            return ""
+        if ((colour == chck.black) and (currentPosition[1]=="8")):
+            return ""
+
+        # are we at the end of board, so return ?
+        if ((colour == chck.white) and (currentPosition[0]=="H")):
+            return ""
+        if ((colour == chck.black) and (currentPosition[0]=="A")):
+            return ""
+        
+        self.avaialbeMove = ""
+        if (colour == chck.white):
+            self.directionOfPiece = "DR"
+        else:
+            self.directionOfPiece="UR"
+
+        self.avaialbeMove = self.getCoords(currentPosition,self.directionOfPiece);
+
+        # we assume we could now have hit walls
+        if (self.avaialbeMove==""):
+            print("Bug found in getDoubleMoveToRight")
+            return ""
+
+        self.blockPiece = self.getCheckerAt(self.avaialbeMove);
+        if (self.blockPiece==-1):
+            # no piece in the way so return move
+            return currentPosition+"-"+self.avaialbeMove
+
+        # fall through.. there is a piece, can we take it?
+        if (self.checkers[self.blockPiece].getColour() != colour):
+            # make sure that we are not taking piece off board.
+            if self.checkers[self.blockPiece].getPosition()[1]=="1":
+                return ""
+            if self.checkers[self.blockPiece].getPosition()[1]=="8":
+                return ""
+            # so far so good, not on edge of board
+            self.jumpPosition = self.getCoords(self.avaialbeMove,self.directionOfPiece);
+            self.blockPiece = self.getCheckerAt(self.jumpPosition);
+            if (self.blockPiece==-1):
+                # no piece in the way so return move
+#                print("GetMoveToRight: take a peice found")
+                return currentPosition+"-"+self.jumpPosition+"("+self.avaialbeMove+")"
+
+        # fall though no move to the right , so return blank
+        return ""
 
 
 
+
+
+
+
+########################################################################################
 #  getCoords function caulculates the coordinates of the square around the peice
 # direction  two charactors
 # charactor 0 = U = up board (C-B), D = Down Board,charactor 1 =  L = Left, R= Right
@@ -362,6 +501,14 @@ class game:
                 if i == self.pieceIndex:
                     self.checkers[i].move(self.pieceNewLocation)
 
+                    # have we become a double ???????
+                    if self.checkers[i].getColour == chck.white:
+                        if self.checkers[i].getPosition()[0]=="A":
+                            self.checkers[i].makeDouble();
+                    else:
+                         if self.checkers[i].getPosition()[0]=="H":
+                            self.checkers[i].makeDouble();                           
+
 
 
         
@@ -435,37 +582,34 @@ class game:
             # (i.e. totalscore = 0), we pick a random move.
             # otherwise we chose the higest move, unless 10% chance (epislon)
             # we take a random move
-
-            # flag for remembering if we have moved yet
-            self.movedYet = False
-
-            if self.totalScores == 0:
-                j = np.random.choice(len(self.avaialbleMoves));
-                print("Random move as no learning data:"+self.avaialbleMoves[j])
-                self.makeMove(self.avaialbleMoves[j])
-
-            else:
-                # totalscores does not equal zero, so we have some learning data
-                # so we have a 10% change of random move, otherwise we take the best move
-                p = np.random.random();
-                if p<0.1:  #10%
+            
+            if (self.stillPlaying):
+                if self.totalScores == 0:
                     j = np.random.choice(len(self.avaialbleMoves));
-                    print("Random move (10% chance):"+self.avaialbleMoves[j])
+                    print("Random move as no learning data:"+self.avaialbleMoves[j])
                     self.makeMove(self.avaialbleMoves[j])
-
-                    # have we just taken a piece ?
-                    if self.avaialbleMoves[j].find("(") != 0:
-                        if self.whosTurn == chck.white:
-                            self.blackPiecesLeft = self.blackPiecesLeft -1
-                        else:
-                            self.whitePiecesLeft=self.whitePiecesLeft -1                   
-
                 else:
-                    # we take the best move 90% of time
-                    j = np.argmax(self.moveScores);  # get best score index
-                    print("Best move (90% chance):"+self.avaialbleMoves[j])
+                    # totalscores does not equal zero, so we have some learning data
+                    # so we have a 10% change of random move, otherwise we take the best move
+                    p = np.random.random();
+                    if p<0.1:  #10%
+                        j = np.random.choice(len(self.avaialbleMoves));
+                        print("Random move (10% chance):"+self.avaialbleMoves[j])
+                        self.makeMove(self.avaialbleMoves[j])
 
-                    self.makeMove(self.avaialbleMoves[j])                
+                        # have we just taken a piece ?
+                        if self.avaialbleMoves[j].find("(") != 0:
+                            if self.whosTurn == chck.white:
+                                self.blackPiecesLeft = self.blackPiecesLeft -1
+                            else:
+                                self.whitePiecesLeft=self.whitePiecesLeft -1                   
+
+                    else:
+                        # we take the best move 90% of time
+                        j = np.argmax(self.moveScores);  # get best score index
+                        print("Best move (90% chance):"+self.avaialbleMoves[j])
+
+                        self.makeMove(self.avaialbleMoves[j])                
 
             # increase counter for number of moves taken
             self.gameTurns=self.gameTurns+1

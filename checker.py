@@ -34,6 +34,10 @@ class checker(object):
     def takePiece(self):
         self.onBoard = False
 
+    def makeDouble(self):
+        print("Congrats piece:"+self.position+" is now a double")
+        self.isDouble = True
+
 
     # serialisation used for creating a hash of the board
     def serialisation(self):
