@@ -28,7 +28,7 @@ class checker(object):
     def isActive(self):
         return self.onBoard;
 
-    def isDouble(self):
+    def ifDouble(self):
         return self.isDouble;
 
     def takePiece(self):

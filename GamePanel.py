@@ -54,7 +54,7 @@ class window(object):
         self.w.create_rectangle(PosX*Interval,PosY*Interval,(PosX*Interval)+Interval,(PosY*Interval)+Interval, fill="blue")    
 
     
-    def drawChecker(self,CoordXY,Colour):
+    def drawChecker(self,CoordXY,Colour,isDouble):
         if (Colour == chck.white):
             FillColour="white"
         else:
@@ -63,6 +63,11 @@ class window(object):
         PosY=int(CoordXY[1])-1
         Interval = self.BoardSize/8
         self.w.create_oval(PosX*Interval,PosY*Interval,(PosX*Interval)+Interval,(PosY*Interval)+Interval, fill=FillColour) 
+
+        if isDouble==True:
+            self.w.create_oval(PosX*Interval,PosY*Interval,(PosX*Interval)+(Interval/2),(PosY*Interval)+(Interval/2), fill="green") 
+            
+
 
     def update(self):
         self.master.update()
