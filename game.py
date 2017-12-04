@@ -530,7 +530,11 @@ class game:
                          if self.checkers[i].getPosition()[0]=="H":
                             self.checkers[i].makeDouble();                           
 
-
+# **********************************************************
+#
+#  This functions runs a computer vs computer game
+#
+# **********************************************************
 
         
     def PlayComputervsComputerGame(self):
@@ -657,7 +661,7 @@ class game:
 
         self.gameTurns = self.gameTurns /2
 
-        if self.whitePiecesLeft==0:
+        if self.whitePiecesLeft<self.blackPiecesLeft:
             print("Black wins! in "+str(self.gameTurns)+" moves")
             LearntData.updateLearningData(blackMoves,self.gameTurns,self.blackPiecesLeft)
             if self.gameTurns < 80:
@@ -666,6 +670,163 @@ class game:
             print("white wins! in "+str(self.gameTurns)+" moves")
             LearntData.updateLearningData(whiteMoves,self.gameTurns,self.whitePiecesLeft)
             if self.gameTurns < 80:
+                LearntData.saveLearningData()
+
+
+        GamePanelWindow.close()
+            
+            
+
+# **********************************************************
+#
+#  This functions runs a Player vs computer game
+#
+# **********************************************************
+
+        
+    def PlayPlayervsComputerGame(self):
+        # who starts first
+        self.whosTurn = chck.white
+
+
+        # what colour does the player play
+        self.playerColour = chck.black
+
+        # setup board
+        self.setupBoard()
+
+        # number of turns taken in the game (i.e. number of times a player has taken a turn)
+        # note:  This does not increase if a player gets a free move when taking a oppisiton
+        # piece, e,g, take two or more pieces in one go
+        self.gameTurns = 0
+        # variable to allow us to keep tack of pieces taken
+        self.pieceJustTaken = False
+
+        # number of pieces left, we start with 12, when we get to zero we know we have a winner
+        self.blackPiecesLeft = 12
+        self.whitePiecesLeft = 12
+
+        # are we still playing flag
+        self.stillPlaying = True
+
+        # Load into memory the learning data from file...
+        #TODO:  This needs to be done at start... will get big....
+        
+        LearntData = ld.LearningData()
+        self.avaialbleMoves = []
+
+        # draw board - get cals
+        GamePanelWindow = gp.window()
+
+        # Player game states
+        blackMoves = []
+        whiteMoves = []
+
+        j = 0
+        # main game loop
+        while self.stillPlaying:
+ 
+            # draw board
+            GamePanelWindow.drawSquares()
+            for i in range(0,len(self.checkers)):
+                if self.checkers[i].isActive():
+                    GamePanelWindow.drawChecker(self.checkers[i].getPosition(),self.checkers[i].getColour(),self.checkers[i].ifDouble())
+            GamePanelWindow.update()
+
+            # show whose turn it is
+            if self.whosTurn == self.playerColour:
+                print("Player turn! - Which move do you want to make ?")
+            else:
+                print("computer turn! - please wait...")
+                
+            # get valid moves for current player
+            self.avaialbleMoves = self.getValidMoves(self.whosTurn)
+                
+            if len(self.avaialbleMoves) == 0:
+                self.stillPlaying = False
+                print("no moves avaialble...exiting")
+            else:
+                if self.whosTurn == self.playerColour:
+                    for i in range (0,len(self.avaialbleMoves)):
+                        print(str(i)+") "+self.avaialbleMoves[i])
+                    print("....")
+                    self.dummy=input("Which move? :")
+                    j = int(self.dummy)
+                
+            self.moveScores = []
+            self.totalScores = 0
+
+            for i in range(0,len(self.avaialbleMoves)):
+                self.hashcodeforMove = self.getFutureBoardHash(self.avaialbleMoves[i])
+                self.currentScore = LearntData.getScorefromHash(self.hashcodeforMove)
+                self.moveScores.append(self.currentScore)
+                self.totalScores = self.totalScores + self.currentScore
+
+            if (self.stillPlaying and self.whosTurn == self.playerColour):
+                self.makeMove(self.avaialbleMoves[j])
+
+            # if we have no learnt data for any of the moves
+            # (i.e. totalscore = 0), we pick a random move.
+            # otherwise we chose the higest move, unless 10% chance (epislon)
+            # we take a random move
+            
+            if (self.stillPlaying and self.whosTurn != self.playerColour):
+                if self.totalScores == 0:
+                    j = np.random.choice(len(self.avaialbleMoves));
+#                    print("Random move as no learning data:"+self.avaialbleMoves[j])
+                    self.makeMove(self.avaialbleMoves[j])
+                else:
+                    # totalscores does not equal zero, so we have some learning data
+                    # so we have a 10% change of random move, otherwise we take the best move
+                    p = np.random.random();
+                    if p<0.1:  #10%
+                        j = np.random.choice(len(self.avaialbleMoves));
+#                        print("Random move (10% chance):"+self.avaialbleMoves[j])
+                        self.makeMove(self.avaialbleMoves[j])
+                  
+                    else:
+                        # we take the best move 90% of time
+                        j = np.argmax(self.moveScores);  # get best score index
+#                        print("Best move (90% chance):"+self.avaialbleMoves[j])
+
+                        self.makeMove(self.avaialbleMoves[j])                 
+                
+            # increase counter for number of moves taken
+            self.gameTurns=self.gameTurns+1
+
+            #who's turn is now and save game states, assuming game is still going.
+            if self.stillPlaying:
+                if self.whosTurn == chck.white:
+                    whiteMoves.append(self.getCurrentBoardHash())
+                    self.whosTurn = chck.black
+                else:
+                    self.whosTurn = chck.white
+                    blackMoves.append(self.getCurrentBoardHash())
+
+            # end of game?
+            if ((self.whitePiecesLeft ==0) or (self.blackPiecesLeft ==0)):
+                self.stillPlaying = False
+                print("end of game detected - no pieces left")
+
+ # end of game ############
+        # draw board
+        GamePanelWindow.drawSquares()
+        for i in range(0,len(self.checkers)):
+            if self.checkers[i].isActive():
+                GamePanelWindow.drawChecker(self.checkers[i].getPosition(),self.checkers[i].getColour(),self.checkers[i].ifDouble())
+        GamePanelWindow.update()
+
+        self.gameTurns = self.gameTurns /2
+
+        if self.whitePiecesLeft<self.blackPiecesLeft:
+            print("Black wins! in "+str(self.gameTurns)+" moves")
+            LearntData.updateLearningData(blackMoves,self.gameTurns,self.blackPiecesLeft)
+            if self.gameTurns < 50:
+                LearntData.saveLearningData()
+        else:
+            print("white wins! in "+str(self.gameTurns)+" moves")
+            LearntData.updateLearningData(whiteMoves,self.gameTurns,self.whitePiecesLeft)
+            if self.gameTurns < 50:
                 LearntData.saveLearningData()
 
 
@@ -684,7 +845,7 @@ class game:
 
         # play computer against computer
         self.mycount=0
-        while self.mycount<50:
+        while self.mycount<5000:
             self.PlayComputervsComputerGame()
             self.mycount=self.mycount+1
 
